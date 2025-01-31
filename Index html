@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Driving Game</title>
+    <style>
+        body { margin: 0; text-align: center; background: #222; color: white; }
+        canvas { background: gray; display: block; margin: auto; }
+    </style>
+</head>
+<body>
+    <h1>🚗 Car Driving Game</h1>
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+        // Setup canvas
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+        canvas.width = 400;
+        canvas.height = 600;
+
+        // Player car
+        const car = { x: 175, y: 500, width: 50, height: 100, speed: 5 };
+        const obstacles = [];
+        let gameOver = false;
+        let score = 0;
+
+        // Handle car movement
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "ArrowLeft" && car.x > 50) car.x -= car.speed * 5;
+            if (event.key === "ArrowRight" && car.x < canvas.width - car.width - 50) car.x += car.speed * 5;
+        });
+
+        // Create obstacles
+        setInterval(() => {
+            obstacles.push({ x: Math.random() * 300 + 50, y: 0, width: 50, height: 100, speed: 3 });
+        }, 1500);
+
+        // Game loop
+        function gameLoop() {
+            if (gameOver) {
+                ctx.fillStyle = "red";
+                ctx.font = "30px Arial";
+                ctx.fillText("Game Over! Score: " + score, 50, 300);
+                return;
+            }
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw road
+            ctx.fillStyle = "black";
+            ctx.fillRect(50, 0, 300, canvas.height);
+
+            // Draw car
+            ctx.fillStyle = "blue";
+            ctx.fillRect(car.x, car.y, car.width, car.height);
+
+            // Move and draw obstacles
+            ctx.fillStyle = "red";
+            obstacles.forEach((obstacle, index) => {
+                obstacle.y += obstacle.speed;
+                ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+
+                // Collision detection
+                if (
+                    car.x < obstacle.x + obstacle.width &&
+                    car.x + car.width > obstacle.x &&
+                    car.y < obstacle.y + obstacle.height &&
+                    car.y + car.height > obstacle.y
+                ) {
+                    gameOver = true;
+                }
+
+                // Remove obstacles that go off screen
+                if (obstacle.y >
